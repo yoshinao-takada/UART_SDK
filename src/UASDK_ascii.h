@@ -12,13 +12,13 @@ extern "C" {
 #endif
 
 // status flags in UASDK_ascii_read() return number
-#define UASDK_ascii_rlen_sts    0x0300  /* received length status mask, bit16,17 */
+#define UASDK_ascii_rlen_sts    0x030000  /* received length status mask, bit16,17 */
 #define UASDK_ascii_rlen_sts_nodata 0
-#define UASDK_ascii_rlen_sts_normal 0x0100 /* bit16=1, bit17=0 */
-#define UASDK_ascii_rlen_sts_bufferfull 0x0200 /* bit16=0, bit17=1 */
-#define UASDK_ascii_rnc_sts     0x0c00 /* received null character status mask, bit18,19 */
-#define UASDK_ascii_rnc_sts_0   0x0000 /* no null character was received. */
-#define UASDK_ascii_rnc_sts_1   0x0400 /* 1 or more null character was recieved with other characters */
+#define UASDK_ascii_rlen_sts_normal 0x010000 /* bit16=1, bit17=0 */
+#define UASDK_ascii_rlen_sts_bufferfull 0x020000 /* bit16=0, bit17=1 */
+#define UASDK_ascii_rnc_sts     0x0c0000 /* received null character status mask, bit18,19 */
+#define UASDK_ascii_rnc_sts_0   0x000000 /* no null character was received. */
+#define UASDK_ascii_rnc_sts_1   0x040000 /* 1 or more null character was recieved with other characters */
 
 /*!
 \brief try to read a serialport

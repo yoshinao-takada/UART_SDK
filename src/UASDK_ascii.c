@@ -5,6 +5,22 @@
 #include    <errno.h>
 #include    <time.h>
 #include    <math.h>
+#include    <memory.h>
+
+static int contain_null(const uint8_t* begin, ssize_t length)
+{
+    int result = 0;
+    const uint8_t *end = begin + length;
+    for (; begin != end; begin++)
+    {
+        if (*begin == 0)
+        {
+            result++;
+            break;
+        }
+    }
+    return result;
+}
 
 int UASDK_ascii_read(int fd, pUASDK_buffer_t buffer)
 {
@@ -33,7 +49,17 @@ int UASDK_ascii_read(int fd, pUASDK_buffer_t buffer)
             break;
         }
         //-------------- update sts -----------------
-        
+        else if (s == 0)
+        {
+            sts = UASDK_ascii_rlen_sts_nodata | UASDK_ascii_rnc_sts_0;
+            break;
+        }
+        else
+        {
+            sts = UASDK_ascii_rlen_sts_normal |
+                (contain_null(buffer->head.pbytes + buffer->caplen.byte_filled, s) ?
+                UASDK_ascii_rnc_sts_1 : UASDK_ascii_rnc_sts_0);
+        }       
         buffer->caplen.byte_filled += (uint8_t)s;
     } while (0);
     return err | sts;
@@ -82,6 +108,10 @@ int UASDK_ascii_1st_strlen(pcUASDK_buffer_t buffer)
         }
         length++;
     }
+    if (*i_buffer == '\0')
+    { // including NULL termination
+        length++;
+    }
     return length;
 }
 
@@ -97,25 +127,19 @@ int UASDK_ascii_shiftout(pUASDK_buffer_t in, pUASDK_buffer_t out)
             out->caplen.byte_filled = 0;
             break;
         }
-        else if ((copy_length + 1) > out->caplen.byte_capacity)
+        else if (copy_length > out->caplen.byte_capacity)
         { // out does not have a sufficient capacity
             err = ENOBUFS;
             break;
         }
         //----------- copy operation ------------
-        char* i_in = in->head.pstring; // input iterator
-        char* i_out = out->head.pstring; // output iterator
-        const char* e_in = i_in + copy_length; // end of input teration
-        for (; i_in != e_in; i_in++, i_out++)
-        {
-            *i_in = *i_out;
-        }
+        memcpy(out->head.pstring, in->head.pstring, copy_length);
+        out->caplen.byte_filled = copy_length;
         //----------- check if shift operation is needed ------------
-        if ((copy_length == in->caplen.byte_filled) ||
-            (((copy_length + 1) == in->caplen.byte_filled) && (*i_in == '\0'))
-        ) { //-------- clear operation because all the bytes in 'in' was copied out.
-            *(out->head.pstring) = '\0';
-            out->caplen.byte_filled = 0;
+        if (copy_length == in->caplen.byte_filled)
+        { //-------- clear operation because all the bytes in 'in' was copied out.
+            *(in->head.pstring) = '\0';
+            in->caplen.byte_filled = 0;
             break;
         }
         //------------ shift operation ---------------
