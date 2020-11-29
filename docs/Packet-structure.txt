@@ -1,0 +1,21 @@
+1. Header
+[RAD][SAD][PID][PTP][PLL][CKSUM]
+
+[RAD] : recipient address (byte) : 0..254: normal address, 255: broadcast
+[SAD] : sendor address (byte) : 0..254
+[PID] : packet ID (2-bytes) : serial number belonging to a set of a recipient address and a sendor address
+[PTP] : packet type (byte) : 0: sync, 1: command, 2: result code
+[PLL] : payload length (byte) : 0..255, 0 only for sync, 4: only reslt code, 4 < : others
+[CKSUM] : check sum (2-bytes)
+
+
+2. payload
+2.1. command
+[CMD][INFO-LEN][INFO-TYPE][INFO-PARAM][CKSUM]
+
+2.2. result code
+[RESCODE][CODE][CKSUM]
+
+2.3. result code with data
+[RESCODE][CODE][DATA-LEN][DATA][CKSUM]
+

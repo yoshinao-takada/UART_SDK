@@ -41,10 +41,11 @@ int UASDK_setup(pcUASDK_setup_t setup, int fd);
 int UASDK_open(const char* devicename, int* pfd);
 
 /*!
-\brief get default setup of a serial port
+\brief get default setup of a serial port (normal 9600 BPS, HS 115200 BPS)
 \return the pointer to the internal static variable of the default setup
 */
-pcUASDK_setup_t UASDK_default_setup();
+pcUASDK_setup_t UASDK_default_setup(); // 9600 BPS
+pcUASDK_setup_t UASDK_default_setupHS(); // 115200 BPS
 
 /*!
 \brief estimate time period to transfer bytes.
@@ -52,6 +53,38 @@ pcUASDK_setup_t UASDK_default_setup();
 \param byte_count [in] to transfer.
 */
 void UASDK_setup_estimate_time(pcUASDK_setup_t setup, int byte_count, struct timespec* time);
+
+#pragma region UASDK_commport_t
+typedef struct {
+    int fd; // file descriptor of comm port
+    char* name; // comm port name
+    UASDK_setup_t setup; // port setup, baudrate and byte format
+    uint8_t buf[0]; // head of extra memory block
+} UASDK_commport_t, *pUASDK_commport_t;
+typedef const UASDK_commport_t pcUASDK_commport_t;
+
+/*!
+\brief open and configure commport
+\param name [in] device name e.g. /dev/ttyS0, /dev/ttyUSB1
+\param setup [in] baudrate and byte format
+\param ppcommport [out] newly opened object
+\return errno
+*/
+int UASDK_commport_open(const char* name, pcUASDK_setup_t setup, pUASDK_commport_t *ppcommport);
+
+/*!
+\brief close commport and release the allocated resources
+\param ppcommport [in,out] the object to destroy
+\return errno
+*/
+int UASDK_commport_close(pUASDK_commport_t *ppcommport);
+
+/*!
+\brief send break signal and wait (the break signal time + marginal time)
+
+*/
+#pragma endregion UASDK_commport_t
+
 #ifdef __cplusplus
 }
 #endif

@@ -1,0 +1,13 @@
+[1] Type of device operation
+1. On-demand reporting and configuration
+2. asynchronous triggered set/get data initiated by device
+3. Synchronous set/get data, initiated by host
+
+[2] On-demand reporting and configuration
+(1) set reg-ID reg-data-length reg-data
+    <= ACK or NAK
+(2) get reg-ID
+    <= reg-data-length reg-data
+(3) transfer initiator role
+    <= interrupt-service-request
+    execute (1) or (2) sequence

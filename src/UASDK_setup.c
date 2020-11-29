@@ -6,6 +6,7 @@
 #include    <errno.h>
 #include    <math.h>
 #include    <time.h>
+#include    <string.h>
 #include    "UASDK_setup.h"
 
 
@@ -79,6 +80,12 @@ pcUASDK_setup_t UASDK_default_setup()
     return &setup;
 }
 
+pcUASDK_setup_t UASDK_default_setupHS()
+{
+    static const UASDK_setup_t setup = UASDK_SETUP_HSDEFAULT;
+    return &setup;
+}
+
 int UASDK_open(const char* devicename, int* pfd)
 {
     int err = EXIT_SUCCESS;
@@ -109,4 +116,47 @@ void UASDK_setup_estimate_time(pcUASDK_setup_t setup, int byte_count, struct tim
     fract_part = modff(total_period, &int_part);
     time->tv_sec = (int)int_part;
     time->tv_nsec = (int)(fract_part * 1.0e9);
+}
+
+int UASDK_commport_open(const char* name, pcUASDK_setup_t setup, pUASDK_commport_t *ppcommport)
+{
+    int err = EXIT_SUCCESS;
+    do {
+        size_t cb_head = sizeof(UASDK_commport_t);
+        size_t cb_buf = strlen(name) + 1;
+        pUASDK_commport_t p = (*ppcommport = (pUASDK_commport_t)malloc(cb_head + cb_buf));
+        if (!p)
+        {
+            err = ENOMEM;
+            break;
+            fprintf(stderr, "%s,%d,errno=%d(0x%04x), alloc len=%lu\n", __FILE__, __LINE__, err, err,
+                (cb_head + cb_buf));
+        }
+        p->name = p->buf;
+        strcpy(p->name, name);
+        if (UASDK_open(name, &(p->fd)))
+        {
+            fprintf(stderr, "%s,%d,errno=%d(0x%04x)\n", __FILE__, __LINE__, err, err);
+            break;
+        }
+        memcpy(&p->setup, setup, sizeof(UASDK_setup_t));
+        if (UASDK_setup(setup, p->fd))
+        {
+            fprintf(stderr, "%s,%d,errno=%d(0x%04x)\n", __FILE__, __LINE__, err, err);
+            break;
+        }
+    } while (0);
+    return err;
+}
+
+int UASDK_commport_close(pUASDK_commport_t *ppcommport)
+{
+    int err = EXIT_SUCCESS;
+    do {
+        pUASDK_commport_t p = *ppcommport;
+        close(p->fd);
+        free((void*)p);
+        *ppcommport = (pUASDK_commport_t)NULL;
+    } while (0);
+    return err;
 }

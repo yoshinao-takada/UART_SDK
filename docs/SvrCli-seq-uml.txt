@@ -1,0 +1,6 @@
+@startuml
+control MASTER
+control DEVICE0
+MASTER -> DEVICE0 : command
+MASTER <- DEVICE0 : reply
+@enduml

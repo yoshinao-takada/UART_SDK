@@ -33,6 +33,8 @@ typedef const UASDK_baudrate_t *pcUASDK_baudrate_t;
 #define ARRAYSIZE(a)    sizeof(a)/sizeof(a[0])
 #endif
 
+// this type is identical to the thread start_routine of pthread
+typedef void* (*UASDK_callback_t)(void* param);
 #ifdef  __cplusplus
 }
 #endif

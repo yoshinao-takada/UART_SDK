@@ -13,7 +13,8 @@
 #include    "UASDK_defs.h"
 #include    "UASDK_buffer.h"
 #include    "UASDK_ascii.h"
-//#define UTEST
+#include    "UASDK_addressable.h"
+// #define UTEST
 #define HELP_STRING \
 "Command line format\n" \
 "\ttest0 subcmd devname\n" \
@@ -227,7 +228,7 @@ int main(int argc, char* argv[])
     return err;
 }
 #else
-int main(int argc, char* argv[])
+int UT_buffer()
 {
     static const char src_string0[] = "abc";
     static const char src_string1[] = "def\0ghi";
@@ -276,7 +277,6 @@ int main(int argc, char* argv[])
         assert(0 == strcmp(src_string1+4, subbuffer->head.pstring));
         assert(0 == buffer->caplen.byte_filled);
         printf("subbuffer string = %s\n", subbuffer->head.pstring);
-        printf("UTEST:main() test pass\n");
     } while (0);
     if (buffer)
     {
@@ -286,6 +286,50 @@ int main(int argc, char* argv[])
     {
         free(subbuffer);
     }
+    printf("%s test pass\n", __FUNCTION__);
     return err;
+}
+
+int UT_addressable()
+{
+    static const uint8_t myaddress = 0x10;
+    static const uint8_t youraddresses[] = { 0x24, 0x25, 0x34, 0x35 };
+    static const int test_iterations[] = { 16, 65537, 0xfffff, 0x100000 };
+    int err = EXIT_SUCCESS;
+    pUASDK_addressable_t addressable = (pUASDK_addressable_t)NULL;
+    do {
+        assert(EXIT_SUCCESS==UASDK_addressable_new(myaddress, (uint8_t)ARRAYSIZE(youraddresses), youraddresses, &addressable));
+        assert(myaddress == addressable->mine);
+        assert((uint8_t)ARRAYSIZE(youraddresses) == addressable->num_yours);
+        for (int i = 0; i != ARRAYSIZE(test_iterations); i++)
+        {
+            int msgc = 0;
+            for (int j = 0; j != test_iterations[i]; j++)
+            {
+                msgc = UASDK_addressable_get_inc(addressable, youraddresses[i]);
+            }
+            assert(msgc == (test_iterations[i]-1));
+            assert(addressable->msgc[i] == test_iterations[i]);
+        }
+        for (int i = 0; i != ARRAYSIZE(test_iterations); i++)
+        {
+            int msgc = test_iterations[i];
+            for (int j = 0; j != test_iterations[i]; j++)
+            {
+                msgc = UASDK_addressable_dec_get(addressable, youraddresses[i]);
+            }
+            assert(msgc == 0);
+            assert(addressable->msgc[i] == 0);
+        }
+    } while (0);
+    UASDK_addressable_delete(&addressable);
+    printf("%s test pass\n", __FUNCTION__);
+    return err;
+}
+
+int main(int argc, char* argv[])
+{
+    assert(EXIT_SUCCESS == UT_buffer());
+    assert(EXIT_SUCCESS == UT_addressable());
 }
 #endif
