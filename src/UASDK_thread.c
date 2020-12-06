@@ -1,8 +1,10 @@
 #include    "UASDK_thread.h"
 #include    <stdlib.h>
 #include    <errno.h>
+#include    <stdio.h>
 
 static void* UASDK_thread_runner(void* arg);
+static void* UASDK_thread_proc_donothing(void* arg) {}
 
 int UASDK_thread_new(pUASDK_thread_t* ppthread, UASDK_callback_t core_procedure, void* core_procedure_arg)
 {
@@ -20,7 +22,15 @@ int UASDK_thread_new(pUASDK_thread_t* ppthread, UASDK_callback_t core_procedure,
         {
             break;
         }
+        if (EXIT_SUCCESS != (err = pthread_mutex_lock(&thread->core.sync_gate_enter)))
+        {
+            break;
+        }
         if (EXIT_SUCCESS != (err = pthread_mutex_init(&thread->core.sync_gate_exit, NULL)))
+        {
+            break;
+        }
+        if (EXIT_SUCCESS != (err = pthread_mutex_lock(&thread->core.sync_gate_exit)))
         {
             break;
         }
@@ -42,11 +52,7 @@ int UASDK_thread_delete(pUASDK_thread_t* ppthread)
     int err = EXIT_SUCCESS;
     pUASDK_thread_t thread = *ppthread;
     do {
-        if (EXIT_SUCCESS != (err = pthread_mutex_lock(&thread->core.sync_gate_exit)))
-        {
-            break;
-        }
-        thread->core.procedure = NULL;
+        thread->core.procedure = UASDK_thread_proc_donothing;
         if (EXIT_SUCCESS != (err = pthread_mutex_unlock(&thread->core.sync_gate_enter)))
         {
             break;
@@ -72,7 +78,7 @@ static void* UASDK_thread_runner(void* arg)
 {
     pUASDK_thread_core_procedure_t core = (pUASDK_thread_core_procedure_t)arg;
     int err = EXIT_SUCCESS;
-    while (core->procedure)
+    while (core->procedure != UASDK_thread_proc_donothing)
     {
         err = pthread_mutex_lock(&core->sync_gate_enter);
         if (core->procedure)
@@ -82,4 +88,14 @@ static void* UASDK_thread_runner(void* arg)
         err = pthread_mutex_unlock(&core->sync_gate_exit);
     }
     return arg;
+}
+
+void UASDK_thread_enter_core_proc(pUASDK_thread_t thread)
+{
+    pthread_mutex_unlock(&thread->core.sync_gate_enter);
+}
+
+void UASDK_thread_wait_core_proc_exit(pUASDK_thread_t thread)
+{
+    pthread_mutex_lock(&thread->core.sync_gate_exit);
 }

@@ -30,6 +30,18 @@ int UASDK_thread_new(pUASDK_thread_t* ppthread, UASDK_callback_t core_procedure,
 \param ppthread [in,out]
 */
 int UASDK_thread_delete(pUASDK_thread_t* ppthread);
+
+/*!
+\brief It allows to execute core.proceudre() callback function.
+\param thread [in,out]
+*/
+void UASDK_thread_enter_core_proc(pUASDK_thread_t thread);
+
+/*!
+\brief wait for core procedure exiting.
+\param thread [in,out]
+*/
+void UASDK_thread_wait_core_proc_exit(pUASDK_thread_t thread);
 #ifdef __cplusplus
 }
 #endif
