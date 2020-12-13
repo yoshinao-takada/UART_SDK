@@ -11,9 +11,14 @@ extern "C" {
 #include    <stdint.h>
 #endif
 typedef struct {
-    uint8_t *your_addresses;
-    uint16_t *packet_counters;
-    UASDK_callback_t *callbacks;
+    UASDK_callback_t callback;
+    uint16_t packet_counter;
+    uint8_t address;
+} UASDK_channel_t, *pUASDK_channel_t;
+typedef const UASDK_channel_t *pcUASDK_channel_t;
+
+typedef struct {
+    pUASDK_channel_t channels;
     uint8_t size;
     uint8_t my_address;
     uint8_t buf[0]; // beginning of an extra memory region
@@ -54,9 +59,10 @@ typedef const UASDK_addressable_device_t *pcUASDK_addressable_device_t;
 \param ppdevice [out] newly created object
 */
 int UASDK_addressable_device_new(
+    uint8_t myaddress,
     uint8_t size,
     const char* name,
-    pcUASDK_setup_t seteup,
+    pcUASDK_setup_t setup,
     pUASDK_addressable_device_t *ppdevice
 );
 

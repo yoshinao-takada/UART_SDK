@@ -1,6 +1,11 @@
 @startuml
 control MASTER
 control DEVICE0
-MASTER -> DEVICE0 : command
-MASTER <- DEVICE0 : reply
+MASTER -> DEVICE0 : Setup command
+MASTER <- DEVICE0 : Setup reply
+loop
+    MASTER <- DEVICE0 : SRQ
+    MASTER -> DEVICE0 : Service command
+    MASTER <- DEVICE0 : Service reply
+end
 @enduml

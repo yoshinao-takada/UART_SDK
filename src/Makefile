@@ -21,8 +21,8 @@ RELEASE_OBJECTS = \
 	$(RELEASE_OBJ_DIR)/UASDK_addressable.o \
 	$(RELEASE_OBJ_DIR)/UASDK_thread.o
 
-DEBUG_TARGET = $(DEBUG_TARGET_DIR)/test0 $(DEBUG_TARGET_DIR)/test1
-RELEASE_TARGET = $(RELEASE_TARGET_DIR)/test0 $(RELEASE_TARGET_DIR)/test1
+DEBUG_TARGET = $(DEBUG_TARGET_DIR)/test0 $(DEBUG_TARGET_DIR)/test1 $(DEBUG_TARGET_DIR)/test2
+RELEASE_TARGET = $(RELEASE_TARGET_DIR)/test0 $(RELEASE_TARGET_DIR)/test1 $(RELEASE_TARGET_DIR)/test2
 
 debug	:	$(DEBUG_TARGET)
 
@@ -34,13 +34,22 @@ $(DEBUG_TARGET_DIR)/test1	:	$(DEBUG_OBJECTS) $(DEBUG_OBJ_DIR)/test1.o
 	mkdir -p $(DEBUG_TARGET_DIR)
 	$(CC) -o $@ $^ $(LIBS)
 
-$(DEBUG_OBJ_DIR)/test1.o	:	test1.c UASDK_setup.h
-	mkdir -p $(DEBUG_OBJ_DIR)
-	$(CC) $(DEBUG_CCFLAGS) $(INCFLAGS) $< -o $@
+$(DEBUG_TARGET_DIR)/test2	:	$(DEBUG_OBJECTS) $(DEBUG_OBJ_DIR)/test2.o
+	mkdir -p $(DEBUG_TARGET_DIR)
+	$(CC) -o $@ $^ $(LIBS)
 
 $(DEBUG_OBJ_DIR)/test0.o	:	test0.c UASDK_setup.h
 	mkdir -p $(DEBUG_OBJ_DIR)
 	$(CC) $(DEBUG_CCFLAGS) $(INCFLAGS) $< -o $@
+
+$(DEBUG_OBJ_DIR)/test1.o	:	test1.c UASDK_setup.h UASDK_thread.h
+	mkdir -p $(DEBUG_OBJ_DIR)
+	$(CC) $(DEBUG_CCFLAGS) $(INCFLAGS) $< -o $@
+
+$(DEBUG_OBJ_DIR)/test2.o	:	test2.c UASDK_setup.h UASDK_addressable.h
+	mkdir -p $(DEBUG_OBJ_DIR)
+	$(CC) $(DEBUG_CCFLAGS) $(INCFLAGS) $< -o $@
+	# $(CC) $(DEBUG_CCFLAGS) $(INCFLAGS) -DUNIT_TEST $< -o $@
 
 $(DEBUG_OBJ_DIR)/UASDK_setup.o	:	UASDK_setup.c UASDK_setup.h
 	mkdir -p $(DEBUG_OBJ_DIR)
