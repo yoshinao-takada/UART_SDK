@@ -1,0 +1,20 @@
+My serializer specification
+
+1. Serialized object format
+Format: [8cc_ID][u16_size][payload]
+8cc_ID : eight-character-code identifier which is defined by each serializable type.
+    It occupies 8 bytes.
+u16_size : payload byte count represented by a uint16_t number.
+payload : byte array containing the payload
+
+2. Serializable object
+Which must implement
+    1) _8cc : static constant of 8cc_ID
+    2) UASDK_<T>_serialize(const void* src, void* dst) : serializer
+        <T>: type identifier string
+        src: source data (usually struct or some structured type)
+        dst: buffer for a serialized object
+    3) UASDK_<T>_serialize_estimate(const void* src, void* dst) : estimates byte count of a serialized object
+    4) UASDK_<T>_deserialize(uint16_t src_byte_count, const void* src) : deserializer
+    5) UASDK_<T>_deserialize_estimate(uint16_t src_byte_count, const void* src, void* dst)
+        : estimat byte count of a deserialized object, i.e. restored serializable object.

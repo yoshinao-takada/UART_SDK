@@ -1,0 +1,25 @@
+1. Overview
+UASDK provides in-process modules or outside-process app modules with
+services supported by UART RS-485 bus connected external devices.
+
+[app0] -- gRPC --+                            . +-- [dev0]
+                 |                            . |
+[app1] -- gRPC --+                            . +-- [dev1]
+                 |                            . |
+[app2] -- gRPC --+-- [mphub] --+              . +-- [dev2]
+                               |              . |
+                               +-- [UAhub] -- . +-- [dev3]
+                               |              . |
+[app3] ---<ipmod-I/F>----------+              . +-- [dev4]
+                               |              . |
+[app4] ---<ipmod-I/F>----------+              . +-- [dev5]
+                               |              . |
+[app5] ---<ipmod-I/F>----------+              . +-- [dev6]
+                                              .
+    Intra master machine connection           .  bus connection on RS-485
+
+[app0..2] : local or remote client process connected via IPC like REST, gRPC, etc.
+[app3..5] : in-process client connected via well defined function call interface
+[mphub] : multi-process hub software modules
+[UAhub] : UART SDK application framework
+[dev0..6] : external devices connected on a bus of RS-485

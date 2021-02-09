@@ -1,0 +1,21 @@
+History
+2021-01-31,Initial release defined basic common types.
+
+1. Overview
+* Limite data type set as small as possible.
+* Structured data definition is limited up to single layer.
+* integer type is limited to those which defined in stdint.h except xxx_fast_yyy_t.
+  e.g. only simple (u)intDD_t are allowed. DD=[8,16,32,64].
+* Only double and float are allowed as floating number types.
+* string is length header and uint8_t array. Characters are always encoded as UTF-8.
+* wstring is length thead and uint16_t array. Characters are always encoded as UTF-16.
+
+2. Compatibility control
+All available data types are listed in this document. Editor must update
+* History
+* Type list, containing type name, brief description, C header file path
+
+3. Type list
+UASDK_string_t, UTF-8 string, UASDK_string.h
+UASDK_i16array_t, int16_t array, UASDK_i16array.h
+UASDK_r32array_t, float32 array, UASDK_r32array.h

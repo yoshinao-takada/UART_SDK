@@ -1,0 +1,6 @@
+8cc code,enum name,C type name,serializer,deserializer,c header file,description
+UAstring,ID8cc_UAstring,UASDK_string_t,UASDK_string_serialize,UASDK_string_desrialize,UASDK_string.h,UTF-8 string
+UAwstrin,ID8cc_UAwstring,UASDK_wstring_t,UASDK_wstring_serialize,UASDK_wstring_desrialize,UASDK_wstring.h,UTF-16 string
+UAi16ary,ID8cc_UAi16array,UASDK_i16array_t,UASDK_i16array_serialize,UASDK_i16array_desrialize,UASDK_i16array.h,int16_t array
+UAr32ary,ID8cc_UAr32array,UASDK_r32array_t,UASDK_r32array_serialize,UASDK_r32array_desrialize,UASDK_r32array.h,int16_t array
+UA8cc___,ID8cc_UA8cc,UASDK_8cc_t,UASDK_8cc_serialize,UASDK_8cc_deserialize,UASDK_8cc.h,8cc fixed length string identifier
