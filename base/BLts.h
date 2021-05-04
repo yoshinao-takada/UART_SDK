@@ -61,13 +61,13 @@ contains printf style format descriptor and variables; e.g. "%s:%d", "hello", 10
 #define BLts_logelapsed(pf_, tref_, ...) { \
     struct timespec telapsed_; BLts_getelapsed(&telapsed_, tref_); \
     float tflt_sec = BLts_tofs(&telapsed_); \
-    fprintf(pf_, "Te-sec,%f,",tflt_sec_); fprintf(pf_, __VA_ARGS__); \
+    fprintf(pf_, "Te-sec,%f,",tflt_sec_); fprintf(pf_, __VA_ARGS__); fflush(pf_); \
 }
 
 #define BLts_logelapsedms(pf_, tref_, ...) { \
     struct timespec telapsed_; BLts_getelapsed(&telapsed_, tref_); \
     float tflt_millisec_ = BLts_tofms(&telapsed_); \
-    fprintf(pf_, "Te-millisec,%f,",tflt_millisec_); fprintf(pf_, __VA_ARGS__); \
+    fprintf(pf_, "Te-millisec,%f,",tflt_millisec_); fprintf(pf_, __VA_ARGS__); fflush(pf_); \
 }
 
 /*!
@@ -76,9 +76,8 @@ contains printf style format descriptor and variables; e.g. "%s:%d", "hello", 10
 #define BLts_log(pf_, ...) { \
     struct timespec tnow_; BLts_getnow(&tnow_); \
     float tfls_sec_ = BLts_tofs(&tnow_); \
-    fprintf(pf_, "TUTC-sec,%f,",tfls_sec_); fprintf(pf_, __VA_ARGS__); \
+    fprintf(pf_, "TUTC-sec,%f,",tfls_sec_); fprintf(pf_, __VA_ARGS__); fflush(pf_); \
 }
-
 #ifdef __cplusplus
 }
 #endif

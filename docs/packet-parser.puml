@@ -1,0 +1,10 @@
+@startuml
+[*] -> empty
+empty : Enter : reset rxbuf
+empty -> empty : none/\n[data length < header length]
+empty -> empty : callback(payloadless packet)/\n[data length >= header length]
+empty -down-> payload_incomplete : move header to pkt buffer/\n[data length >= header length]
+payload_incomplete -> payload_incomplete: move payload bytes to pkt buffer/\n[data length < required payload length]
+payload_incomplete -> empty : move payload bytes to pkt buffer/\n[data length >= required payload length]
+payload_incomplete : Exit : callback(pkt) if payload is full.
+@enduml

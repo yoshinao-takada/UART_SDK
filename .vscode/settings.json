@@ -1,7 +1,30 @@
 {
     "files.associations": {
         "thread": "c",
-        "blthread.h": "c"
+        "blthread.h": "c",
+        "blcrc.h": "c",
+        "uasdkpacket.h": "c",
+        "blbase.h": "c",
+        "cstdlib": "c",
+        "uasdkio.h": "c",
+        "stdlib.h": "c",
+        "errno.h": "c",
+        "errno-base.h": "c",
+        "uasdkiofw.h": "c",
+        "uasdkiofw_defaults.h": "c",
+        "catmacro.h": "c",
+        "blheapdebug.h": "c",
+        "time.h": "c",
+        "blsystick.h": "c",
+        "signal.h": "c",
+        "stdio.h": "c",
+        "ctime": "c",
+        "io.h": "c",
+        "condition_variable": "c",
+        "*.ipp": "c",
+        "uasdkpkt.h": "c",
+        "uasdkiobase.h": "c",
+        "termios.h": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

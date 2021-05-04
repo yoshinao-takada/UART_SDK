@@ -5,11 +5,11 @@
             "includePath": [
                 "${workspaceFolder}/**"
             ],
-            "defines": [  ],
-            "compilerPath": "/usr/bin/clang",
-            "cStandard": "c11",
+            "defines": [ "__USE_POSIX"  ],
+            "compilerPath": "/opt/intel/sw_dev_tools/bin/icc",
+            "cStandard": "gnu99",
             "cppStandard": "c++14",
-            "intelliSenseMode": "clang-x64"
+            "intelliSenseMode": "gcc-x64"
         }
     ],
     "version": 4

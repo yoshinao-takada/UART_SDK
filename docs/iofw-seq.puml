@@ -1,0 +1,24 @@
+@startuml
+start
+:RxReaderState = wait_header;
+while (check stop_request)
+    if (RxReaderState == wait_header)
+        :read RxD as header;
+        if (header is with-payload type)
+            :RxReaderState = wait_payload;
+        endif
+    else
+        :read RxD as payload;
+    endif
+    if (Rx packet complete)
+        :dispatch packet;
+    endif
+    if (queue0 not empty)
+    endif
+    if (queue1 not empty)
+    endif
+    if (queue2 not empty)
+    endif
+endwhile (true)
+stop
+@enduml
