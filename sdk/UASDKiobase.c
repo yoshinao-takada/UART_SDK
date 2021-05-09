@@ -75,14 +75,15 @@ static void set_misc_options(struct termios* uart_opt)
     // disable canonical input (i.e. raw mode)
     // disable echo normal characters and echo erase characters as BS-SP-BS
     //// disable SIGINTR, SIGSUSP, SIGDSUSP, SIGQUIT signals
-    //uart_opt->c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
-    uart_opt->c_lflag &= ~(ICANON | ECHO | ECHOE);
+    uart_opt->c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
+    //uart_opt->c_lflag &= ~(ICANON | ECHO | ECHOE);
     // dispable X-ON, X-OFF, and any other character sequence flow control
     uart_opt->c_iflag &= ~(IXON | IXOFF | IXANY);
     // disable postprocess outout
     uart_opt->c_oflag &= ~OPOST;
     uart_opt->c_cflag |= (CLOCAL | CREAD);
     uart_opt->c_cflag &= ~CRTSCTS; // disable RTS/CTS control
+    uart_opt->c_iflag &= ~(INLCR | IGNCR | ICRNL | IUCLC | IMAXBEL); // disable character remapping and echo BEL
 }
 
 
@@ -147,7 +148,7 @@ int UASDKiobase_open(pUASDKuartdescriptor_t uart, const char* name, pcUASDKbaudr
     return err;
 }
 
-int UASDKiobase_write(pcUASDKuartdescriptor_t uart, pcUASDKunibuf_t ub, int* actually_written)
+int UASDKiobase_write(pcUASDKuartdescriptor_t uart, pcUASDKunibuf_t ub)
 {
     int err = EXIT_SUCCESS;
     do {

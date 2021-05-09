@@ -16,8 +16,8 @@ int iobase()
     int err = EXIT_SUCCESS;
     do {
         int err_each = EXIT_SUCCESS;
-        // err |= err_each = iobase_synch();
-        // UT_SHOW(stderr, __FUNCTION__, __LINE__, err_each);
+        err |= err_each = iobase_synch();
+        UT_SHOW(stderr, __FUNCTION__, __LINE__, err_each);
         err |= err_each = iobase_thread();
         UT_SHOW(stderr, __FUNCTION__, __LINE__, err_each);
     } while (0);
@@ -27,6 +27,21 @@ int iobase()
 
 static const char*  data[] =
 {
+    "0123--4567++**//",
+    "1234567890ABCDEFGHIJKLMNO",
+    "abcdefghijklmnopqrstuvwxyz"
+    "0123--4567++**//",
+    "1234567890ABCDEFGHIJKLMNO",
+    "abcdefghijklmnopqrstuvwxyz"
+    "0123--4567++**//",
+    "1234567890ABCDEFGHIJKLMNO",
+    "abcdefghijklmnopqrstuvwxyz"
+    "0123--4567++**//",
+    "1234567890ABCDEFGHIJKLMNO",
+    "abcdefghijklmnopqrstuvwxyz"
+    "0123--4567++**//",
+    "1234567890ABCDEFGHIJKLMNO",
+    "abcdefghijklmnopqrstuvwxyz"
     "0123--4567++**//",
     "1234567890ABCDEFGHIJKLMNO",
     "abcdefghijklmnopqrstuvwxyz"
@@ -63,11 +78,10 @@ static int iobase_synch()
         }
         for (int i = 0; i < ARRAYSIZE(data); i++)
         {
-            int actually_written = 0;
             transfer_time(i, &t);
             txbuf.voidbuf.filled_bytes = strlen(data[i]);
             memcpy(txbuf.voidbuf.buf, (const void*)data[i], txbuf.voidbuf.filled_bytes);
-            if (EXIT_SUCCESS != (err = UASDKiobase_write(&uartTx, &txbuf, &actually_written)))
+            if (EXIT_SUCCESS != (err = UASDKiobase_write(&uartTx, &txbuf)))
             {
                 ERROR_LOGBR(__FUNCTION__, __LINE__, err);
             }
@@ -76,8 +90,12 @@ static int iobase_synch()
             {
                 ERROR_LOGBR(__FUNCTION__, __LINE__, err);
             }
-            rxbuf.bytebuf.buf[rxbuf.bytebuf.filled_bytes] = '\0';
-            fprintf(stderr, "read string = %s\n", rxbuf.bytebuf.buf);
+            if (rxbuf.bytebuf.filled_bytes > 0)
+            {
+                rxbuf.bytebuf.buf[rxbuf.bytebuf.filled_bytes] = '\0';
+                fprintf(stderr, "read string = %s\n", rxbuf.bytebuf.buf);
+                rxbuf.bytebuf.filled_bytes = 0;
+            }
         }
         nanosleep(&t, NULL);
         if (EXIT_SUCCESS != (err = UASDKiobase_read(&uartRx, &rxbuf)))

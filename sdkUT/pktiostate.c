@@ -12,13 +12,18 @@ typedef const pktio_context_t *pcpktio_context_t;
 static pktio_context_t g_context = { NULL, EXIT_SUCCESS };
 static UASDKpktio_rxbuf_t rxbuf = RXBUF_INIDEF;
 static UASDKpktio_reader_t reader = { NULL, test_callback, (void*)&g_context, 0, UASDKpktiocmd_ready };
-static UASDKpkt_testgen_t testgen;
+static UASDKpkt_testgen_t testgen, testgen2;
 static const UASDKpktio_state_t states[] = STATES_DEF;
 #pragma region test_support_functions
 static void test_callback(pcUASDKpkt_t rxoutpkt, void* context_)
 {
     fprintf(stderr, "%s enter\n", __FUNCTION__);
     ppktio_context_t context = (ppktio_context_t)context_;
+    if (EXIT_SUCCESS != (context->compare_result = UASDKpkt_checkedc(rxoutpkt)))
+    {
+        fprintf(stderr, "%s: CRC error\n", __FUNCTION__);
+        return;
+    }
     int pktref_size = UASDKpkt_totalbytes(context->pktref);
     int pkt_rx_size = UASDKpkt_totalbytes(rxoutpkt);
     if (pktref_size != pkt_rx_size) 
@@ -53,6 +58,7 @@ static int init_rxbuf()
         }
         rxbuf.rxpkt = rxbuf.rxbuf2.voidbuf.buf;
         UASDKpkt_testgen_init(&testgen);
+        UASDKpkt_testgen_init(&testgen2);
         g_context.pktref = testgen.pkt;
     } while (0);
     return err;
@@ -122,7 +128,8 @@ int pktiostate_empty_incomplete()
 {
     static const UASDKpkt_gensrc_t pkt_gen_src[] = {
         { UASDKpkt_gentype_random, 0x41, 0x81, { (uint16_t)16 }, { NULL } },
-        { UASDKpkt_gentype_random, 0x42, 0x91, { (uint16_t)64 }, { NULL } }
+        { UASDKpkt_gentype_random, 0x42, 0x91, { (uint16_t)64 }, { NULL } },
+        { UASDKpkt_gentype_short, 0x43, 0xa1, { (uint16_t)0 }, { NULL } }
     };
     uint16_t actually_copied, byte_count_to_copy;
     int err = EXIT_SUCCESS;
@@ -169,28 +176,32 @@ int pktiostate_empty_incomplete()
         {
             UT_SHOWBREAK(stderr, __FUNCTION__, __LINE__, (err = EXIT_FAILURE));
         }
-        // put remaining part of the payload
+        // put remaining part of the payload and the next packet
+        UASDKpkt_testgen(&testgen2, &pkt_gen_src[2]);        
         state = next_state;
         if (EXIT_SUCCESS != (err = BLringbuf_put(rxbuf.rxbuf1, 8, testgen.buf.bytebuf.buf + actually_copied, &actually_copied)))
         {
             UT_SHOWBREAK(stderr, __FUNCTION__, __LINE__, err);
         }
-        // get the remaining part of the payload
+        byte_count_to_copy = UASDKpkt_totalbytes(testgen2.pkt);
+        if (EXIT_SUCCESS != (err = BLringbuf_put(rxbuf.rxbuf1, byte_count_to_copy, (const void*)testgen2.pkt, &actually_copied)))
+        {
+            UT_SHOWBREAK(stderr, __FUNCTION__, __LINE__, err);
+        }
+        // get the remaining part of the payload of the 2nd packet
         next_state = states[state.state].state_handler(&rxbuf, &reader);
         if ((next_state.state != StateID_empty) || (next_state.substate != Substate_continue))
         {
             UT_SHOWBREAK(stderr, __FUNCTION__, __LINE__, (err = EXIT_FAILURE));
         }
-    } while (0);
-    UT_SHOW(stderr, __FUNCTION__, __LINE__, err);
-    return err; 
-}
-
-int pktiostate_empty_incomplete_empty()
-{
-    int err = EXIT_SUCCESS;
-    do {
-
+        // get the 3rd packet
+        g_context.pktref = testgen2.pkt;
+        state = next_state;
+        next_state = states[state.state].state_handler(&rxbuf, &reader);
+        if ((next_state.state != StateID_empty) || (next_state.substate != Substate_continue))
+        {
+            UT_SHOWBREAK(stderr, __FUNCTION__, __LINE__, (err = EXIT_FAILURE));
+        }
     } while (0);
     UT_SHOW(stderr, __FUNCTION__, __LINE__, err);
     return err; 
@@ -211,11 +222,6 @@ int pktiostate()
             UT_SHOWBREAK(stderr, __FUNCTION__, __LINE__, err_each);
         }
         err |= (err_each = pktiostate_empty_incomplete());
-        if (err_each)
-        {
-            UT_SHOWBREAK(stderr, __FUNCTION__, __LINE__, err_each);
-        }
-        err |= (err_each = pktiostate_empty_incomplete_empty());
         if (err_each)
         {
             UT_SHOWBREAK(stderr, __FUNCTION__, __LINE__, err_each);

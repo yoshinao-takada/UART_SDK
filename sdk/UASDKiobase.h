@@ -114,10 +114,9 @@ int UASDKiobase_open(pUASDKuartdescriptor_t uart, const char* name, pcUASDKbaudr
 \brief write data
 \param uart [in] UART descriptor
 \param ub [in] unified buffer
-\param actually_written [out] actually written byte count
 \return unix errno compatible number
 */
-int UASDKiobase_write(pcUASDKuartdescriptor_t uart, pcUASDKunibuf_t ub, int* actually_written);
+int UASDKiobase_write(pcUASDKuartdescriptor_t uart, pcUASDKunibuf_t ub);
 
 /*!
 \brief read data

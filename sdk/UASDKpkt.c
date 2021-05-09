@@ -27,8 +27,7 @@ int UASDKpkt_new(pUASDKpkt_t* pppkt, uint16_t payload_byte_count)
 
 void UASDKpkt_setedc(pUASDKpkt_t pkt)
 {
-    uint32_t crc_source_bytes = (sizeof(pUASDKpkt_t) - 2) +
-        ((pkt->opt.pll_sign < 0) ? 0 : pkt->opt.pll);
+    uint32_t crc_source_bytes = UASDKpkt_totalbytes(pkt) - 2;
     BLcrc_t crc;
     BLcrc_init(&crc, CRC_CCITT_LE, 0);
     uint8_t *pkt_begin = (uint8_t*)pkt;
@@ -39,8 +38,7 @@ void UASDKpkt_setedc(pUASDKpkt_t pkt)
 
 int UASDKpkt_checkedc(pcUASDKpkt_t pkt)
 {
-    uint32_t crc_source_bytes = sizeof(pUASDKpkt_t) +
-        ((pkt->opt.pll_sign < 0) ? 0 : pkt->opt.pll);
+    uint32_t crc_source_bytes = UASDKpkt_totalbytes(pkt);
     BLcrc_t crc;
     BLcrc_init(&crc, CRC_CCITT_LE, 0);
     uint8_t *pkt_begin = (uint8_t*)pkt;

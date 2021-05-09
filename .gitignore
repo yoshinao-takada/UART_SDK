@@ -1,3 +1,5 @@
 debug/
 release/
 build/
+*.log
+*/*.log

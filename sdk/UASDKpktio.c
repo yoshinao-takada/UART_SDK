@@ -12,8 +12,9 @@ int UASDKpktio_writesync(pcUASDKuartdescriptor_t uart, pcUASDKpkt_t pkt)
     do {
         size_t total_bytes = UASDKpkt_totalbytes(pkt);
         const UASDKunibuf_t txbuf = { { (void*)pkt, total_bytes, total_bytes } };
-        int actually_written = 0;
-        err = UASDKiobase_write(uart, &txbuf, &actually_written);
+        err = UASDKiobase_write(uart, &txbuf);
+        // fprintf(stderr, "%s,%d,total_bytes=%d\n", __FUNCTION__, __LINE__,
+        //     txbuf.bytebuf.filled_bytes);
     } while (0);
     return err;
 }
@@ -39,7 +40,7 @@ static const UASDKpktio_state_t states[] = STATES_DEF;
 
 State_t SH_empty(pUASDKpktio_rxbuf_t rxbuf, pUASDKpktio_reader_t reader)
 {
-    fprintf(stderr, "%s() enter\n", __FUNCTION__);
+    // fprintf(stderr, "%s() enter\n", __FUNCTION__);
     State_t next_state = { StateID_empty, Substate_continue };
     do {
         uint16_t pkt_header_size = (uint16_t)sizeof(UASDKpkt_t);
@@ -66,7 +67,7 @@ State_t SH_empty(pUASDKpktio_rxbuf_t rxbuf, pUASDKpktio_reader_t reader)
 
 State_t SH_payload_incomplete(pUASDKpktio_rxbuf_t rxbuf, pUASDKpktio_reader_t reader)
 {
-    fprintf(stderr, "%s() enter\n", __FUNCTION__);
+    // fprintf(stderr, "%s() enter\n", __FUNCTION__);
     State_t next_state = { StateID_payload_incomplete, Substate_continue };
     do {
         uint16_t available_byte_count = BLringbuf_available_data(rxbuf->rxbuf1);
@@ -98,7 +99,7 @@ State_t SH_payload_incomplete(pUASDKpktio_rxbuf_t rxbuf, pUASDKpktio_reader_t re
 
 void Enter_empty(pUASDKpktio_rxbuf_t rxbuf, pUASDKpktio_reader_t reader)
 {
-    fprintf(stderr, "%s() enter\n", __FUNCTION__);
+    // fprintf(stderr, "%s() enter\n", __FUNCTION__);
     rxbuf->rxbuf2.bytebuf.filled_bytes = 0;
 }
 
@@ -164,15 +165,17 @@ static void* readthread(void* pvreader)
             }
             continue;
         }
-        fprintf(stderr, "%s,%d, UASDKiobase_read() = %d\n", __FUNCTION__, __LINE__, read_status);
+        // fprintf(stderr, "%s,%d, UASDKiobase_read() = %d\n", __FUNCTION__, __LINE__, read_status);
         uint16_t actual_put = 0;
         if (BLringbuf_put(rxbuf.rxbuf1, (uint16_t)rxbuf.rxbuf0.bytebuf.filled_bytes,
             rxbuf.rxbuf0.bytebuf.buf, &actual_put))
         {
+            fprintf(stderr, "%s,%d, BLringbuf_put(), insufficient\n", __FUNCTION__, __LINE__);
             UASDKpktio_rxbuf_reset(&rxbuf);
             continue;
         }
-        fprintf(stderr, "%s,%d, BLringbuf_put(), bytes = %d\n", __FUNCTION__, __LINE__, actual_put);
+        // fprintf(stderr, "%s,%d, BLringbuf_put(), required_bytes = %d, actually_put_bytes = %d\n",
+        //     __FUNCTION__, __LINE__, rxbuf.rxbuf0.bytebuf.filled_bytes, actual_put);
         rxbuf.rxbuf0.bytebuf.filled_bytes = 0;
         state.substate = Substate_continue;
         do {
@@ -181,9 +184,9 @@ static void* readthread(void* pvreader)
             {
                 states[state.state].exit_handler(&rxbuf, reader);
                 state.state = next_state.state;
-                state.substate = next_state.substate;
                 states[state.state].enter_handler(&rxbuf, reader);
             }
+            state.substate = next_state.substate;
         } while (state.substate);
     } while (state.substate == Substate_continue);
     return pvreader;
