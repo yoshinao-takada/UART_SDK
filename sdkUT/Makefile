@@ -13,11 +13,17 @@ RELEASE_LIBS = -L$(RELEASE_TARGET_DIR) -lUASDK -lbase -pthread
 DEBUG_OBJECTS = \
 	$(DEBUG_OBJECT_DIR)/ut_main.o \
 	$(DEBUG_OBJECT_DIR)/pkt.o \
-	$(DEBUG_OBJECT_DIR)/iobase.o
+	$(DEBUG_OBJECT_DIR)/iobase.o \
+	$(DEBUG_OBJECT_DIR)/pktio.o \
+	$(DEBUG_OBJECT_DIR)/pktgen.o \
+	$(DEBUG_OBJECT_DIR)/pktiostate.o
 RELEASE_OBJECTS = \
 	$(RELEASE_OBJECT_DIR)/ut_main.o \
 	$(RELEASE_OBJECT_DIR)/pkt.o \
-	$(DEBUG_OBJECT_DIR)/iobase.o
+	$(RELEASE_OBJECT_DIR)/iobase.o \
+	$(RELEASE_OBJECT_DIR)/pktio.o \
+	$(RELEASE_OBJECT_DIR)/pktgen.o \
+	$(RELEASE_OBJECT_DIR)/pktiostate.o
 .PHONY	:	debug
 debug	:	$(DEBUG_TARGET)
 
@@ -31,6 +37,15 @@ $(DEBUG_OBJECT_DIR)/pkt.o	:	pkt.c
 	$(CC) $(DEBUG_CC_FLAGS) -o $@ $<
 
 $(DEBUG_OBJECT_DIR)/iobase.o	:	iobase.c
+	$(CC) $(DEBUG_CC_FLAGS) -o $@ $<
+
+$(DEBUG_OBJECT_DIR)/pktio.o	:	pktio.c
+	$(CC) $(DEBUG_CC_FLAGS) -o $@ $<
+
+$(DEBUG_OBJECT_DIR)/pktgen.o	:	pktgen.c
+	$(CC) $(DEBUG_CC_FLAGS) -o $@ $<
+
+$(DEBUG_OBJECT_DIR)/pktiostate.o	:	pktiostate.c
 	$(CC) $(DEBUG_CC_FLAGS) -o $@ $<
 
 ../debug/libUASDK.a	:

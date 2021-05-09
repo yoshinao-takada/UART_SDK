@@ -107,15 +107,34 @@ static void my_SIGINT_handler(int signal_number)
     }
     printf("SIGINT received.\n");
 }
+
+static void my_SIGHUP_handler(int signal_number)
+{
+    if (signal_number != SIGHUP)
+    {
+        return;
+    }
+    printf("SIGHUP received.\n");
+}
+
+static void my_SIGIO_handler(int signal_number)
+{
+    if (signal_number != SIGIO)
+    {
+        return;
+    }
+    printf("SIGIO received.\n");
+}
+
 void* readthread(void* pvcontext)
 {
     sigset_t sigset;
     struct sigaction sa;
-    sa.sa_handler = my_SIGINT_handler;
+    sa.sa_handler = my_SIGIO_handler;
     sa.sa_flags = 0;
     sigemptyset(&sa.sa_mask);
-    sigaddset(&sa.sa_mask, SIGINT);
-    sigaction(SIGINT, &sa, NULL);
+    sigaddset(&sa.sa_mask, SIGIO);
+    sigaction(SIGIO, &sa, NULL);
     piobase_thread_context_t context = (piobase_thread_context_t)pvcontext;
     UASDKunibuf_t unibuf = UASDKunibuf_initdef;
     UASDKunibuf_initbyte(&unibuf, 256);
@@ -150,11 +169,11 @@ static int iobase_thread()
         BLts_logelapsedms(stderr, &context.reftime, "%s created thread.\n", __FUNCTION__);
         sleep(2);
         BLts_logelapsedms(stderr, &context.reftime, "%s killing thread.\n", __FUNCTION__);
-        if (EXIT_SUCCESS != (err = pthread_kill(thread, SIGINT)))
+        if (EXIT_SUCCESS != (err = pthread_kill(thread, SIGIO)))
         {
             break;
         }
-        BLts_logelapsedms(stderr, &context.reftime, "%s signal(,SIGCONT).\n", __FUNCTION__);
+        BLts_logelapsedms(stderr, &context.reftime, "%s signal(,SIGIO).\n", __FUNCTION__);
         if (EXIT_SUCCESS != (err = pthread_join(thread, &thread_return)))
         {
             break;

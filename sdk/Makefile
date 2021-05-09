@@ -9,11 +9,13 @@ RELEASE_OBJECT_DIR = $(RELEASE_TARGET_DIR)/o
 DEBUG_OBJECTS = \
 	$(DEBUG_OBJECT_DIR)/UASDKpkt.o \
 	$(DEBUG_OBJECT_DIR)/UASDKiobase.o \
-	$(DEBUG_OBJECT_DIR)/UASDKpktio.o
+	$(DEBUG_OBJECT_DIR)/UASDKpktio.o \
+	$(DEBUG_OBJECT_DIR)/UASDKpkt_testgen.o
 RELEASE_OBJECTS = \
 	$(RELEASE_OBJECT_DIR)/UASDKpkt.o \
 	$(RELEASE_OBJECT_DIR)/UASDKiobase.o \
-	$(RELEASE_OBJECT_DIR)/UASDKpktio.o
+	$(RELEASE_OBJECT_DIR)/UASDKpktio.o \
+	$(RELEASE_OBJECT_DIR)/UASDKpkt_testgen.o
 
 .PHONY	:	debug
 
@@ -36,11 +38,7 @@ $(DEBUG_OBJECT_DIR)/UASDKpktio.o	:	UASDKpktio.c UASDKpktio.h
 	mkdir -p  $(DEBUG_OBJECT_DIR)
 	$(CC) $(DEBUG_CC_FLAGS) -o $@ $<
 
-$(DEBUG_OBJECT_DIR)/UASDKiofw.o	:	UASDKiofw.c UASDKiofw.h
-	mkdir -p  $(DEBUG_OBJECT_DIR)
-	$(CC) $(DEBUG_CC_FLAGS) -o $@ $<
-
-$(DEBUG_OBJECT_DIR)/UASDKiofw_defaults.o	:	UASDKiofw_defaults.c UASDKiofw_defaults.h
+$(DEBUG_OBJECT_DIR)/UASDKpkt_testgen.o	:	UASDKpkt_testgen.c UASDKpkt_testgen.h
 	mkdir -p  $(DEBUG_OBJECT_DIR)
 	$(CC) $(DEBUG_CC_FLAGS) -o $@ $<
 

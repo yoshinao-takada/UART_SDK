@@ -74,8 +74,9 @@ static void set_misc_options(struct termios* uart_opt)
 {
     // disable canonical input (i.e. raw mode)
     // disable echo normal characters and echo erase characters as BS-SP-BS
-    // disable SIGINTR, SIGSUSP, SIGDSUSP, SIGQUIT signals
-    uart_opt->c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
+    //// disable SIGINTR, SIGSUSP, SIGDSUSP, SIGQUIT signals
+    //uart_opt->c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
+    uart_opt->c_lflag &= ~(ICANON | ECHO | ECHOE);
     // dispable X-ON, X-OFF, and any other character sequence flow control
     uart_opt->c_iflag &= ~(IXON | IXOFF | IXANY);
     // disable postprocess outout

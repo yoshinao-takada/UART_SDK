@@ -24,7 +24,10 @@
         "*.ipp": "c",
         "uasdkpkt.h": "c",
         "uasdkiobase.h": "c",
-        "termios.h": "c"
+        "termios.h": "c",
+        "uasdkpkt_testgen.h": "c",
+        "uasdkpktioprivate.h": "c",
+        "uasdkpktiostate.h": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }
