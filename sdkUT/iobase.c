@@ -83,12 +83,12 @@ static int iobase_synch()
             memcpy(txbuf.voidbuf.buf, (const void*)data[i], txbuf.voidbuf.filled_bytes);
             if (EXIT_SUCCESS != (err = UASDKiobase_write(&uartTx, &txbuf)))
             {
-                ERROR_LOGBR(__FUNCTION__, __LINE__, err);
+                UT_SHOWBREAK(stderr, __FUNCTION__, __LINE__, err);
             }
             nanosleep(&t, NULL);
             if (EXIT_SUCCESS != (err = UASDKiobase_read(&uartRx, &rxbuf)))
             {
-                ERROR_LOGBR(__FUNCTION__, __LINE__, err);
+                UT_SHOWBREAK(stderr, __FUNCTION__, __LINE__, err);
             }
             if (rxbuf.bytebuf.filled_bytes > 0)
             {
@@ -100,7 +100,7 @@ static int iobase_synch()
         nanosleep(&t, NULL);
         if (EXIT_SUCCESS != (err = UASDKiobase_read(&uartRx, &rxbuf)))
         {
-            ERROR_LOGBR(__FUNCTION__, __LINE__, err);
+            UT_SHOWBREAK(stderr, __FUNCTION__, __LINE__, err);
         }
         rxbuf.bytebuf.buf[rxbuf.bytebuf.filled_bytes] = '\0';
         fprintf(stderr, "read string = %s\n", rxbuf.bytebuf.buf);

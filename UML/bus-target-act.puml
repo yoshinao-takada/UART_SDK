@@ -1,0 +1,25 @@
+@startuml
+start
+:receive bus-request;
+:enter pre-communication mode;
+if (receive bus-locked) then (yes)
+    :enter passive communication mode;
+    if (bus-release arrives) then (yes)
+        if (bus-unlocked arrives) then (yes)
+            :return success;
+        else (no)
+            :return error;
+        endif
+    else (no)
+        :do some useful actions;
+    endif
+else if (receive bus-busy\n            or\n       timeout) then (yes)
+    :exit pre-communication mode;
+    :return;
+else
+    :exit pre-communication mode;
+    :log bus-error;
+    :return;
+endif
+stop
+@enduml

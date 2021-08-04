@@ -1,0 +1,20 @@
+@startuml
+start
+:broadcast bus-request;
+:listen on bus;
+if (bus-locked arrives in time) then (yes)
+    :do some operations;
+    :broadcast bus-release;
+    if (bus-unlocked arrives in time) then (yes)
+        :normal-end;
+    else (no)
+        :error-end;
+    endif
+else if (bus-busy arrives in time) then (yes)
+    :error/busy-end;
+else (no)
+    :error-end;
+endif
+
+stop
+@enduml

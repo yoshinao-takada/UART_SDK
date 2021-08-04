@@ -1,16 +1,14 @@
 1-by-1 communication model
 
-[1] setup device
-1. Master send setup command packet to devices.
-2. A device sends result packet
-3A. The system enters wait state
-3B. Master send operation command packet to devices
-4B. A device sends result packet
-5B. Goto 3B or 3A
+Very primitive math actions
+[1] Set A to int16 number.
+[2] Set B to int16 number.
+[3] Get A*B as int32 number
+[4] Get A + B and overflow flag as int16 numbers.
+[5] Get A - B and overflow flag as int16 number.
 
-[2] Master receives an SRQ from a device
-The system is in wait state now.
-1. A device send an SRQ to the master.
-2. Master Sends operation command packet to the device.
-3. The device sends result packet.
-
+[1] seta xxxx\n
+[2] setb xxxx\n
+[3] geta*b\n
+[4] geta+b\n
+[5] geta-b\n

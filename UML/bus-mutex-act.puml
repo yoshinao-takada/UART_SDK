@@ -1,0 +1,13 @@
+@startuml
+start
+:listen on bus;
+:bus-request arrives;
+if (bus is available) then (yes)
+    :requester = sender;
+    note left: 'requester' is a static variable.
+    :broadcast bus-locked;
+else (no)
+    :broadcast bus-busy;
+endif
+stop
+@enduml

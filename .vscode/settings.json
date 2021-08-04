@@ -27,7 +27,15 @@
         "termios.h": "c",
         "uasdkpkt_testgen.h": "c",
         "uasdkpktioprivate.h": "c",
-        "uasdkpktiostate.h": "c"
+        "uasdkpktiostate.h": "c",
+        "source.h": "c",
+        "bldispatcher.h": "c",
+        "pthread.h": "c",
+        "blmultiwin.h": "c",
+        "blsubwin.h": "c",
+        "ares_rules.h": "c",
+        "blmultiwinfw.h": "c",
+        "blgetline.h": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

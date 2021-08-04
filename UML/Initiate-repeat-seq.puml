@@ -1,0 +1,45 @@
+@startuml
+participant Gateway
+participant Device
+participant Trigger_src
+Gateway -> Device : payload packet(setup info)
+Gateway <- Device : payloadless packet(ACK)
+Gateway -> Device : payload packet(start cmd)
+alt Device terminate loop
+    loop TRG packet
+        alt trigger packet
+            Trigger_src -> Device : payloadless packet(TRG)
+            Trigger_src <- Device : payloadless packet(ACK)
+        else hardware trigger
+            Trigger_src -> Device : trigger
+        end
+        Gateway <- Device : payloadless packet(SRQ)
+        Gateway -> Device : payloadless packet(GET cmd)
+        alt continue
+            Gateway <- Device : payload packet(result data)
+        else end record
+            Gateway <- Device : payloadless packet(END) 
+        end
+        
+    end
+    Gateway -> Device : payloadless packet(ACK)
+else Gateway terminate loop
+    loop TRG packet
+        alt trigger packet
+            Trigger_src -> Device : payloadless packet(TRG)
+            Trigger_src <- Device : payloadless packet(ACK)
+        else hardware trigger
+            Trigger_src -> Device : trigger
+        end
+        Gateway <- Device : payloadless packet(SRQ)
+        Gateway -> Device : payloadless packet(GET cmd)
+        Gateway <- Device : payload packet(result data)
+        alt continue loop
+            Gateway -> Device : payloadless packet(ACK)
+        else end loop
+            Gateway -> Device : payloadless packet(END) 
+            Gateway <- Device : payloadless packet(ACK)
+        end
+    end
+end
+@enduml

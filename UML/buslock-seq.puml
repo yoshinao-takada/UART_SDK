@@ -1,0 +1,32 @@
+@startuml
+participant initiator
+participant bus_mutex
+participant target
+participant others
+note over initiator, others : broadcast a bus-request (BRQ)
+initiator -> bus_mutex : bus-request
+initiator -> target : bus-request
+initiator -> others : bus-request
+note over initiator, others : broadcast a bus-locked (BLK)
+initiator <- bus_mutex : acknowledge
+bus_mutex -> target : acknowledge
+bus_mutex -> others : acknowledge
+loop [for something]
+initiator -> target : operation request 0
+initiator <- target : operation complete 0
+initiator -> target : operation request 1
+initiator <- target : operation complete 1
+initiator -> target : operation request 2
+initiator <- target : operation complete 3
+end
+
+note over initiator, others : broadcast a bus-release (BRL)
+initiator -> bus_mutex : bus-release
+initiator -> target : bus-release
+initiator -> others : bus-release
+
+note over initiator, others : broadcast a bus-unlocked (BUL)
+initiator <- bus_mutex : bus-unlocked
+bus_mutex -> target : bus-unlocked
+bus_mutex -> others : bus-unlocked
+@enduml

@@ -1,0 +1,22 @@
+@startuml
+start
+:send bus-request (BRQ);
+:listen on the bus;
+if (timeout) then (yes)
+    :return error;
+else if (bus-busy (BBS) arrives) then (yes)
+    :return error;
+else if (bus-locked (BLK) arrives) then (yes)
+    :do some useful actions;
+    :send bus-release (BRL);
+    :listen on the bus;
+    if (timeout) then (yes)
+        :return error;
+    else if (bus-unlocked (BUL) arrives) then (yes)
+        :return success;
+    else
+        :return error;
+    endif
+endif
+stop
+@enduml

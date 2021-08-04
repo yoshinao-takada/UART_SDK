@@ -1,0 +1,17 @@
+@startuml
+participant Gateway
+participant Device
+participant Trigger_src
+Gateway -> Device : payload packet(setup info)
+Gateway <- Device : payloadless packet(ACK)
+Gateway -> Device : payload packet(start cmd)
+alt TRG packet
+Trigger_src -> Device : payloadless packet(TRG)
+Trigger_src <- Device : payloadless packet(ACK)
+else hardware trigger
+Trigger_src -> Device : hardware trigger
+end
+Gateway <- Device : payloadless packet(SRQ)
+Gateway -> Device : payloadless packet(GET cmd)
+Gateway <- Device : payload packet(result data)
+@enduml

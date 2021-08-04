@@ -8,10 +8,10 @@ int pktiostate();
 int main()
 {
     int err = EXIT_SUCCESS, err_each = EXIT_SUCCESS;
-    //err |= (err_each = pkt());
-    // err |= (err_each = iobase());
-    // err |= (err_each = pktgen());
-    // err |= (err_each = pktiostate());
+    err |= (err_each = pkt());
+    err |= (err_each = iobase());
+    err |= (err_each = pktgen());
+    err |= (err_each = pktiostate());
     err |= (err_each = pktio());
     return err;
 }

@@ -16,7 +16,8 @@ DEBUG_OBJECTS = \
 	$(DEBUG_OBJ_DIR)/BLfile.o \
 	$(DEBUG_OBJ_DIR)/BLprocess.o \
 	$(DEBUG_OBJ_DIR)/BLsystick.o \
-	$(DEBUG_OBJ_DIR)/BLdispatcher.o
+	$(DEBUG_OBJ_DIR)/BLdispatcher.o \
+	$(DEBUG_OBJ_DIR)/BLsettings.o
 RELEASE_OBJECTS = \
 	$(RELEASE_OBJ_DIR)/BLts.o \
 	$(RELEASE_OBJ_DIR)/BLthread.o \
@@ -27,7 +28,8 @@ RELEASE_OBJECTS = \
 	$(RELEASE_OBJ_DIR)/BLfile.o \
 	$(RELEASE_OBJ_DIR)/BLprocess.o \
 	$(RELEASE_OBJ_DIR)/BLsystick.o \
-	$(RELEASE_OBJ_DIR)/BLdispatcher.o
+	$(RELEASE_OBJ_DIR)/BLdispatcher.o \
+	$(RELEASE_OBJ_DIR)/BLsettings.o
 DEBUG_TARGET = $(DEBUG_TARGET_DIR)/libbase.a
 RELEASE_TARGET = $(RELEASE_TARGET_DIR)/libbase.a
 
@@ -78,6 +80,10 @@ $(DEBUG_OBJ_DIR)/BLsystick.o	:	BLsystick.c BLsystick.h
 $(DEBUG_OBJ_DIR)/BLdispatcher.o	:	BLdispatcher.c BLdispatcher.h
 	mkdir -p $(DEBUG_OBJ_DIR)
 	$(CC) $(DEBUG_CCFLAGS) -std=gnu99 -o $@ $<
+
+$(DEBUG_OBJ_DIR)/BLsettings.o	:	BLsettings.c BLsettings.h
+	mkdir -p $(DEBUG_OBJ_DIR)
+	$(CC) $(DEBUG_CCFLAGS) -o $@ $<
 
 .PHONY	:	clean_debug
 clean_debug	:
@@ -131,6 +137,10 @@ $(RELEASE_OBJ_DIR)/BLsystick.o	:	BLsystick.c BLsystick.h
 $(RELEASE_OBJ_DIR)/BLdispatcher.o	:	BLdispatcher.c BLdispatcher.h
 	mkdir -p $(RELEASE_OBJ_DIR)
 	$(CC) $(RELEASE_CCFLAGS) -std=gnu99 -o $@ $<
+
+$(RELEASE_OBJ_DIR)/BLsettings.o	:	BLsettings.c BLsettings.h
+	mkdir -p $(RELEASE_OBJ_DIR)
+	$(CC) $(RELEASE_CCFLAGS) -o $@ $<
 
 .PHONY	:	clean_release
 clean_release	:

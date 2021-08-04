@@ -1,0 +1,14 @@
+@startuml
+participant Gateway
+participant Device
+alt payload-less
+Gateway -> Device : payloadless packet
+Gateway <- Device : payloadless packet
+else payload-less cmd - payload reply
+Gateway -> Device : payloadless packet
+Gateway <- Device : payload packet
+else payload-packet cmd - payloadless reply
+Gateway -> Device : payload packet
+Gateway <- Device : payloadless packet
+end
+@enduml
